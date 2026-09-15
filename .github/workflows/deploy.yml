@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 env:
-  AZURE_WEBAPP_NAME: HealthNester
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/HealthNester
+  AZURE_WEBAPP_NAME: carenester
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/carenester
 
 jobs:
   build-and-deploy:
