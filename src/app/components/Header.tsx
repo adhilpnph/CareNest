@@ -1,4 +1,8 @@
-export function Header() {
+type HeaderProps = {
+  onAdminSignIn: () => void;
+};
+
+export function Header({ onAdminSignIn }: HeaderProps) {
   return (
     <header className="sticky top-4 z-20 mb-8 flex items-center justify-between rounded-full border border-stone-300/80 bg-white/80 px-5 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.08)] backdrop-blur">
       <div className="flex items-center gap-3">
@@ -28,8 +32,12 @@ export function Header() {
         </a>
       </nav>
 
-      <button className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700">
-        Book visit
+      <button
+        type="button"
+        onClick={onAdminSignIn}
+        className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700"
+      >
+        Admin sign in
       </button>
     </header>
   );

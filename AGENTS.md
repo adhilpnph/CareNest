@@ -7,3 +7,105 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# CareNest Frontend Guide
+
+## Overview
+
+This directory contains the CareNest Hospital MVP, a small Next.js App Router
+application styled with Tailwind CSS. The current experience is a single-page
+hospital landing page with static mock content and a client-side department
+doctor panel.
+
+## Directory Structure
+
+```text
+src/app/
+	components/       Reusable page sections and role-based portal components
+	components/admin/ Admin-only portal components
+	components/patient/ Patient-facing portal components
+	components/shared/ Shared application infrastructure
+	data.ts           Static department, doctor, and hero highlight data
+	globals.css       Tailwind import and global document styles
+	layout.tsx        Root layout, metadata, and document-level styles
+	page.tsx          Client page orchestrator and modal state owner
+	store/            Redux store and authentication role slice
+	types.ts          Shared Department and Doctor types
+```
+
+Keep all new components under `src/app/components`, using `admin/`, `patient/`,
+or `shared/` according to the role guidance above. The original landing-page
+sections remain directly under `components/` until they are naturally reused
+by a later feature; do not create a second components directory.
+
+## Existing Components
+
+- `Header.tsx`: Sticky CareNest header with anchor navigation and a book-visit
+	action.
+- `HeroSection.tsx`: Hero statement, calls to action, and highlight pills. It
+	receives the highlight labels from `data.ts`.
+- `ServicesSection.tsx`: Static cards for primary care, diagnostics, and
+	specialist care.
+- `DepartmentsSection.tsx`: Department card grid. It receives department data
+	and calls the page callback when a department is selected.
+- `DoctorModal.tsx`: Conditional modal panel showing one doctor from the
+	selected department, with close, previous, and next controls.
+- `ContactSection.tsx`: Static contact details for phone, address, and hours.
+- `patient/PatientPortal.tsx`: Existing landing-page experience, including its
+	department modal state and temporary admin-preview switch.
+- `admin/AdminPortal.tsx`: Lightweight admin landing placeholder with a switch
+	back to the patient experience through logout.
+- `admin/AdminLogin.tsx`: Temporary admin credential form that dispatches the
+	Redux login action and reports invalid credentials without changing role.
+- `shared/StoreProvider.tsx`: Client boundary that supplies the Redux store.
+
+## State and Data Flow
+
+The Redux store in `store/` is the single source of truth for the current role.
+The `auth` slice starts as an unauthenticated `PATIENT`; guests are explicitly
+initialized as patients on the patient portal mount. The temporary Part 3 auth
+flow exposes `login` and `logout` actions. The credential values are only a
+prototype and must be replaced by real JWT authentication in Part 11.
+
+`page.tsx` reads the role with `useSelector` and renders exactly one portal.
+The patient portal owns its temporary UI state with React `useState`:
+
+- `selectedDepartment` identifies the department shown in the panel.
+- `activeIndex` identifies the doctor currently shown.
+- `isModalOpen` controls whether the panel is mounted.
+
+The patient portal passes data and event callbacks into presentational
+components. Mock departments, doctors, and hero highlights live in `data.ts`;
+their shapes are defined in `types.ts`. There is no API, persistence, or real
+backend authentication, or persistence yet.
+
+## Routing
+
+The app currently uses only the root App Router route supplied by
+`src/app/page.tsx`. Header links use in-page anchors for `home`, `services`,
+`departments`, and `contact`. There are no additional routes or route groups.
+
+## Styling
+
+Tailwind CSS v4 is imported from `src/app/globals.css` using
+`@import "tailwindcss"`. Components use inline Tailwind utility classes rather
+than CSS modules. Global CSS provides smooth scrolling, the light color scheme,
+the stone-toned gradient background, the font stack, and shared transitions.
+Keep the existing restrained grey, white, and stone visual language unless a
+future requirement explicitly changes the design direction.
+
+## Conventions
+
+- Use TypeScript and functional React components.
+- Name component files in PascalCase and export named components where the
+	existing file does so.
+- Keep page-level orchestration in `page.tsx`; put reusable UI in the relevant
+	components subfolder.
+- Define component prop types near the component and reuse shared domain types
+	from `types.ts`.
+- Prefer semantic HTML, explicit button `type` values, accessible labels for
+	icon-only controls, and stable section IDs for in-page navigation.
+- Keep mock content concise and centralized in `data.ts` rather than embedding
+	duplicated domain data across components.
+- Run `npm run lint` and `npm run build` from `frontend/` after meaningful
+	changes.
