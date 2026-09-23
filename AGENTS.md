@@ -58,6 +58,8 @@ by a later feature; do not create a second components directory.
 - `admin/AdminLogin.tsx`: Temporary admin credential form that dispatches the
 	Redux login action and reports invalid credentials without changing role.
 - `shared/StoreProvider.tsx`: Client boundary that supplies the Redux store.
+- `shared/AssistantSidebar.tsx`: Session-persistent assistant UI with loading,
+  error, booking-success, and rejected-booking states.
 - `patient/PatientApiSection.tsx`: RTK Query-backed department and doctor
 	directory plus patient appointment creation.
 
@@ -87,6 +89,11 @@ backend at `http://localhost:8000`. Every request sends the current Redux role
 as `X-Role`; this is the temporary Part 5 stub contract and will be replaced by
 JWT attachment in Part 11. RTK Query tags invalidate resource lists after
 mutations.
+
+The assistant uses `POST /assistant/chat` through the same API slice. Its
+conversation history is stored in `sessionStorage` for the current browser
+session. Successful booking results invalidate the appointments tag; rejected
+booking results are shown inline.
 
 ## Routing
 

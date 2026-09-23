@@ -8,6 +8,7 @@ import { Header } from "../Header";
 import { HeroSection } from "../HeroSection";
 import { PatientApiSection } from "./PatientApiSection";
 import { ServicesSection } from "../ServicesSection";
+import { AssistantSidebar } from "../shared/AssistantSidebar";
 import { highlights } from "../../data";
 import { enterAsPatient } from "../../store/authSlice";
 import type { AppDispatch } from "../../store";
@@ -30,6 +31,7 @@ export function PatientPortal() {
       <ServicesSection />
       <PatientApiSection />
       <ContactSection />
+      <AssistantSidebar />
     </main>
   );
 }

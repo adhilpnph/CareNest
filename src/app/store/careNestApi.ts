@@ -34,6 +34,25 @@ export type Prescription = {
   appointment_id: number | null;
 };
 
+export type AssistantMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type AppointmentUpdate = {
+  success: boolean;
+  appointment_id: number | null;
+  doctor_id: number;
+  slot_start: string;
+  detail: string;
+};
+
+export type AssistantChatResponse = {
+  reply: string;
+  appointment_update: AppointmentUpdate | null;
+  history: AssistantMessage[];
+};
+
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000",
   prepareHeaders: (headers, { getState }) => {
@@ -146,6 +165,19 @@ export const careNestApi = createApi({
       query: (id) => ({ url: `/prescriptions/${id}`, method: "DELETE" }),
       invalidatesTags: ["Prescriptions"],
     }),
+    assistantChat: builder.mutation<
+      AssistantChatResponse,
+      {
+        message: string;
+        history: AssistantMessage[];
+        patient_name: string;
+        patient_email: string;
+      }
+    >({
+      query: (body) => ({ url: "/assistant/chat", method: "POST", body }),
+      invalidatesTags: (result) =>
+        result?.appointment_update?.success ? ["Appointments"] : [],
+    }),
   }),
 });
 
@@ -166,4 +198,5 @@ export const {
   useCreatePrescriptionMutation,
   useUpdatePrescriptionMutation,
   useDeletePrescriptionMutation,
+  useAssistantChatMutation,
 } = careNestApi;
