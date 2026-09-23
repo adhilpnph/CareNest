@@ -56,7 +56,7 @@ export type LoginResponse = {
   role: "ADMIN" | "PATIENT";
   is_authenticated: boolean;
 };
-
+console.log("🔥 CURRENT API BASE:", "https://carenestbackend.fastapicloud.dev");
 const baseQuery = fetchBaseQuery({
   baseUrl:  "https://carenestbackend.fastapicloud.dev",
   credentials: "include",
