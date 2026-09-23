@@ -58,7 +58,7 @@ export type LoginResponse = {
 };
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "https://carenestbackend.fastapicloud.dev/",
   credentials: "include",
 });
 
