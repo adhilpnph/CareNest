@@ -58,6 +58,8 @@ by a later feature; do not create a second components directory.
 - `admin/AdminLogin.tsx`: Temporary admin credential form that dispatches the
 	Redux login action and reports invalid credentials without changing role.
 - `shared/StoreProvider.tsx`: Client boundary that supplies the Redux store.
+- `patient/PatientApiSection.tsx`: RTK Query-backed department and doctor
+	directory plus patient appointment creation.
 
 ## State and Data Flow
 
@@ -78,6 +80,13 @@ The patient portal passes data and event callbacks into presentational
 components. Mock departments, doctors, and hero highlights live in `data.ts`;
 their shapes are defined in `types.ts`. There is no API, persistence, or real
 backend authentication, or persistence yet.
+
+`store/careNestApi.ts` is the single frontend data layer for backend resources.
+It uses `NEXT_PUBLIC_API_URL` when provided and otherwise targets the local
+backend at `http://localhost:8000`. Every request sends the current Redux role
+as `X-Role`; this is the temporary Part 5 stub contract and will be replaced by
+JWT attachment in Part 11. RTK Query tags invalidate resource lists after
+mutations.
 
 ## Routing
 
@@ -109,3 +118,6 @@ future requirement explicitly changes the design direction.
 	duplicated domain data across components.
 - Run `npm run lint` and `npm run build` from `frontend/` after meaningful
 	changes.
+- Run `npm test` for Vitest component tests and `npm run test:e2e` for the
+	Playwright browser suite. The E2E suite expects the local backend to be
+	available at port 8000 and never targets the hosted app.
