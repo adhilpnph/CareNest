@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store";
 import { login } from "../../store/authSlice";
-import { TEMP_ADMIN_CREDENTIALS } from "../../store/authCredentials";
+import { useLoginMutation } from "../../store/careNestApi";
 
 type AdminLoginProps = {
   onClose: () => void;
@@ -15,20 +15,18 @@ export function AdminLogin({ onClose }: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loginRequest, loginResult] = useLoginMutation();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (
-      username !== TEMP_ADMIN_CREDENTIALS.username ||
-      password !== TEMP_ADMIN_CREDENTIALS.password
-    ) {
+    setError("");
+    try {
+      await loginRequest({ username, password }).unwrap();
+      dispatch(login());
+      onClose();
+    } catch {
       setError("Those admin credentials are not recognised.");
-      return;
     }
-
-    dispatch(login());
-    onClose();
   };
 
   return (
@@ -77,9 +75,10 @@ export function AdminLogin({ onClose }: AdminLoginProps) {
           {error && <p className="mb-3 text-sm text-red-700">{error}</p>}
           <button
             type="submit"
+            disabled={loginResult.isLoading}
             className="rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white hover:bg-stone-700"
           >
-            Sign in
+            {loginResult.isLoading ? "Signing in..." : "Sign in"}
           </button>
         </div>
       </form>

@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { RootState } from ".";
 
 export type Department = {
   id: number;
@@ -53,13 +52,14 @@ export type AssistantChatResponse = {
   history: AssistantMessage[];
 };
 
+export type LoginResponse = {
+  role: "ADMIN" | "PATIENT";
+  is_authenticated: boolean;
+};
+
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000",
-  prepareHeaders: (headers, { getState }) => {
-    const role = (getState() as RootState).auth.role;
-    headers.set("X-Role", role);
-    return headers;
-  },
+  credentials: "include",
 });
 
 export const careNestApi = createApi({
@@ -67,6 +67,12 @@ export const careNestApi = createApi({
   baseQuery,
   tagTypes: ["Departments", "Doctors", "Appointments", "Prescriptions"],
   endpoints: (builder) => ({
+    login: builder.mutation<LoginResponse, { username: string; password: string }>({
+      query: (body) => ({ url: "/auth/login", method: "POST", body }),
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({ url: "/auth/logout", method: "POST" }),
+    }),
     getDepartments: builder.query<Department[], void>({
       query: () => "/departments",
       providesTags: ["Departments"],
@@ -182,6 +188,8 @@ export const careNestApi = createApi({
 });
 
 export const {
+  useLoginMutation,
+  useLogoutMutation,
   useGetDepartmentsQuery,
   useCreateDepartmentMutation,
   useUpdateDepartmentMutation,

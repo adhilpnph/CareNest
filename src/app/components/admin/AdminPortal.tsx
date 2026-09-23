@@ -21,6 +21,7 @@ import {
   useGetDepartmentsQuery,
   useGetDoctorsQuery,
   useGetPrescriptionsQuery,
+  useLogoutMutation,
   useUpdateAppointmentMutation,
   useUpdateDepartmentMutation,
   useUpdateDoctorMutation,
@@ -49,6 +50,7 @@ function formatDateTime(value: string) {
 
 export function AdminPortal() {
   const dispatch = useDispatch<AppDispatch>();
+  const [logoutRequest] = useLogoutMutation();
   const [editing, setEditing] = useState<EditTarget | null>(null);
   const departments = useGetDepartmentsQuery();
   const doctors = useGetDoctorsQuery();
@@ -125,7 +127,7 @@ export function AdminPortal() {
           <h1 className="mt-3 text-4xl font-black tracking-[-0.06em] text-stone-900">CareNest operations</h1>
           <p className="mt-3 text-sm text-stone-600">Manage live departments, clinicians, appointments, and prescriptions.</p>
         </div>
-        <button type="button" onClick={() => dispatch(logout())} className={buttonClass}>Sign out</button>
+        <button type="button" onClick={async () => { await logoutRequest().unwrap(); dispatch(logout()); }} className={buttonClass}>Sign out</button>
       </header>
 
       {editing && (

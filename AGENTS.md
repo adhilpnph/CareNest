@@ -67,9 +67,9 @@ by a later feature; do not create a second components directory.
 
 The Redux store in `store/` is the single source of truth for the current role.
 The `auth` slice starts as an unauthenticated `PATIENT`; guests are explicitly
-initialized as patients on the patient portal mount. The temporary Part 3 auth
-flow exposes `login` and `logout` actions. The credential values are only a
-prototype and must be replaced by real JWT authentication in Part 11.
+initialized as patients on the patient portal mount. Admin login and logout
+call backend auth endpoints. The backend keeps the JWT in an httpOnly cookie,
+so the frontend never stores or reads the token directly.
 
 `page.tsx` reads the role with `useSelector` and renders exactly one portal.
 The patient portal owns its temporary UI state with React `useState`:
@@ -85,10 +85,9 @@ backend authentication, or persistence yet.
 
 `store/careNestApi.ts` is the single frontend data layer for backend resources.
 It uses `NEXT_PUBLIC_API_URL` when provided and otherwise targets the local
-backend at `http://localhost:8000`. Every request sends the current Redux role
-as `X-Role`; this is the temporary Part 5 stub contract and will be replaced by
-JWT attachment in Part 11. RTK Query tags invalidate resource lists after
-mutations.
+backend at `http://localhost:8000`. Requests include credentials so the
+backend can validate its JWT cookie. RTK Query tags invalidate resource lists
+after mutations.
 
 The assistant uses `POST /assistant/chat` through the same API slice. Its
 conversation history is stored in `sessionStorage` for the current browser
