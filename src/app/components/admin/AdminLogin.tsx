@@ -5,6 +5,11 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store";
 import { login } from "../../store/authSlice";
 import { useLoginMutation } from "../../store/careNestApi";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Input } from "../ui/input";
+import { Icon } from "../ui/IconGlyph";
 
 type AdminLoginProps = {
   onClose: () => void;
@@ -30,58 +35,35 @@ export function AdminLogin({ onClose }: AdminLoginProps) {
   };
 
   return (
-    <section className="mb-8 rounded-[24px] border border-stone-300 bg-white/90 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.08)]">
-      <div className="mb-5 flex items-start justify-between gap-4">
+    <Card className="animate-rise mb-6 overflow-hidden border-[#e4e1eb] shadow-[0_18px_55px_rgba(38,34,60,0.08)]">
+      <div className="flex items-start justify-between gap-4 border-b border-[#efedf2] bg-gradient-to-r from-[#faf9fd] to-white px-5 py-5 sm:px-6">
         <div>
-          <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-stone-500">
-            Admin access
-          </span>
-          <h2 className="mt-2 text-2xl font-black tracking-[-0.05em] text-stone-900">
-            Sign in to CareNest
-          </h2>
+          <Badge variant="accent" className="uppercase tracking-[0.12em]">Admin access</Badge>
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-[#292830]">Sign in to CareNest</h2>
+          <p className="mt-1 text-sm text-[#85828d]">Use your administrator account to continue.</p>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close admin sign-in"
-          className="grid h-9 w-9 place-items-center rounded-full border border-stone-300 text-xl text-stone-700 hover:border-stone-500"
-        >
-          ×
-        </button>
+        <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close admin sign-in">
+          <Icon name="close" className="size-4" />
+        </Button>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-        <label className="grid gap-2 text-sm font-medium text-stone-700">
+      <form onSubmit={handleSubmit} className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+        <label className="grid gap-1.5 text-[11px] font-medium text-[#67656f]">
           Email
-          <input
-            type="email"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            required
-            className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 font-normal outline-none focus:border-stone-700"
-          />
+          <Input type="email" value={username} onChange={(event) => setUsername(event.target.value)} required />
         </label>
-        <label className="grid gap-2 text-sm font-medium text-stone-700">
+        <label className="grid gap-1.5 text-[11px] font-medium text-[#67656f]">
           Password
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 font-normal outline-none focus:border-stone-700"
-          />
+          <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
         </label>
         <div className="sm:col-span-2">
-          {error && <p className="mb-3 text-sm text-red-700">{error}</p>}
-          <button
-            type="submit"
-            disabled={loginResult.isLoading}
-            className="rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white hover:bg-stone-700"
-          >
+          {error && <p role="alert" className="mb-3 text-sm text-[#b74b4b]">{error}</p>}
+          <Button type="submit" disabled={loginResult.isLoading}>
             {loginResult.isLoading ? "Signing in..." : "Sign in"}
-          </button>
+            {!loginResult.isLoading && <Icon name="arrow-right" className="size-4" />}
+          </Button>
         </div>
       </form>
-    </section>
+    </Card>
   );
 }

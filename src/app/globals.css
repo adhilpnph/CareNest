@@ -2,18 +2,64 @@
 
 :root {
   color-scheme: light;
+  --surface: #f8f8f9;
+  --ink: #292830;
+  --muted: #85828d;
+  --accent: #7969bd;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  background: linear-gradient(180deg, #f5f5f4 0%, #ecece8 100%);
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% -24rem, rgba(196, 188, 223, 0.2), transparent 54rem),
+    linear-gradient(180deg, #fafafc 0%, var(--surface) 48rem, #f7f7f8 100%);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-feature-settings: "ss01" on, "cv11" on;
+  text-rendering: optimizeLegibility;
 }
 
-button,
-a {
-  transition: all 0.2s ease;
+::selection {
+  background: #e8e2fa;
+  color: #332a54;
+}
+
+.animate-rise {
+  animation: rise-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-overlay {
+  animation: fade-in 180ms ease-out both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

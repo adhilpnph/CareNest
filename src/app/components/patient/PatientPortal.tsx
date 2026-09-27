@@ -22,7 +22,7 @@ export function PatientPortal() {
   }, [dispatch]);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-20 pt-5 text-stone-700 sm:px-6 lg:px-8">
+    <main className="page-enter mx-auto max-w-[1240px] px-4 pb-20 pt-3 sm:px-6 lg:px-9">
       <Header onAdminSignIn={() => setIsAdminLoginOpen(true)} />
       {isAdminLoginOpen && (
         <AdminLogin onClose={() => setIsAdminLoginOpen(false)} />

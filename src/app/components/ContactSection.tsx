@@ -1,29 +1,36 @@
+import { Badge } from "./ui/badge";
+import { Card } from "./ui/card";
+import { Icon } from "./ui/IconGlyph";
+
+const contactDetails = [
+  { label: "Call us", value: "+1 (415) 555-0148", icon: "clock" as const },
+  { label: "Visit us", value: "18 Willow Avenue, Suite 200", icon: "arrow-right" as const },
+  { label: "Hours", value: "Mon-Sat · 8:00 AM to 8:00 PM", icon: "clock" as const },
+];
+
 export function ContactSection() {
   return (
-    <section id="contact" className="pt-20">
-      <div className="mb-7">
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-stone-500">
-          Contact
-        </span>
-        <h2 className="mt-2 text-4xl font-black tracking-[-0.06em] text-stone-900">
+    <section id="contact" className="scroll-mt-28 pb-10 pt-14 sm:pt-20">
+      <div className="mb-6">
+        <Badge variant="outline" className="mb-3 uppercase tracking-[0.12em]">Contact</Badge>
+        <h2 className="text-3xl font-semibold tracking-[-0.055em] text-[#292830] sm:text-[40px]">
           Ready to speak with our team?
         </h2>
       </div>
 
-      <div className="grid gap-4 rounded-[24px] border border-stone-300 bg-white/80 p-6 md:grid-cols-3">
-        <div>
-          <p className="mb-2 text-sm text-stone-500">Call us</p>
-          <strong className="text-lg">+1 (415) 555-0148</strong>
-        </div>
-        <div>
-          <p className="mb-2 text-sm text-stone-500">Visit us</p>
-          <strong className="text-lg">18 Willow Avenue, Suite 200</strong>
-        </div>
-        <div>
-          <p className="mb-2 text-sm text-stone-500">Hours</p>
-          <strong className="text-lg">Mon-Sat • 8:00 AM to 8:00 PM</strong>
-        </div>
-      </div>
+      <Card className="grid divide-y divide-[#efedf2] overflow-hidden md:grid-cols-3 md:divide-x md:divide-y-0">
+        {contactDetails.map((detail) => (
+          <div key={detail.label} className="group flex items-start gap-3.5 p-5 sm:p-6">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-[#eeecf2] bg-[#faf9fc] text-[#7969bd] transition-colors group-hover:border-[#e4dff2] group-hover:bg-[#f6f3fc]">
+              <Icon name={detail.icon} className="size-4" />
+            </span>
+            <div>
+              <p className="text-[11px] font-medium text-[#96939e]">{detail.label}</p>
+              <strong className="mt-1.5 block text-[14px] font-semibold tracking-[-0.02em] text-[#39383f]">{detail.value}</strong>
+            </div>
+          </div>
+        ))}
+      </Card>
     </section>
   );
 }

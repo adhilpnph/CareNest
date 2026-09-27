@@ -5,10 +5,13 @@ import {
   type AssistantMessage,
   useAssistantChatMutation,
 } from "../../store/careNestApi";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Input } from "../ui/input";
+import { Icon } from "../ui/IconGlyph";
 
 const storageKey = "carenest-assistant-history";
-const inputClass =
-  "rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-stone-700";
 
 export function AssistantSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,34 +63,56 @@ export function AssistantSidebar() {
   };
 
   return (
-    <aside className="fixed bottom-5 right-5 z-20 w-[min(22rem,calc(100vw-2rem))]">
+    <aside className="fixed bottom-4 right-4 z-30 w-[min(23rem,calc(100vw-2rem))] sm:bottom-6 sm:right-6">
       {isOpen && (
-        <section className="mb-3 rounded-[24px] border border-stone-300 bg-stone-50 p-5 shadow-[0_18px_40px_rgba(0,0,0,0.16)]">
-          <div className="mb-4 flex items-start justify-between gap-4">
-            <div>
-              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-stone-500">
-                CareNest assistant
+        <Card className="animate-rise mb-3 overflow-hidden border-[#e5e2eb] shadow-[0_18px_60px_rgba(34,31,48,0.16)]">
+          <div className="flex items-start justify-between gap-3 border-b border-[#efedf2] bg-gradient-to-r from-[#faf9fd] to-white px-4 py-4">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-8 place-items-center rounded-lg bg-[#292730] text-white">
+                <Icon name="sparkle" className="size-4" />
               </span>
-              <h2 className="mt-1 text-xl font-bold text-stone-900">Plan your visit</h2>
+              <div>
+                <Badge variant="accent" className="px-2 py-1 uppercase tracking-[0.1em]">CareNest assistant</Badge>
+                <h2 className="mt-1 text-[15px] font-semibold tracking-[-0.03em] text-[#302f36]">Plan your visit</h2>
+              </div>
             </div>
-            <button type="button" onClick={() => setIsOpen(false)} aria-label="Close assistant" className="text-xl text-stone-600">×</button>
+            <Button type="button" variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Close assistant" className="-mr-1 -mt-1 size-8">
+              <Icon name="close" className="size-4" />
+            </Button>
           </div>
-          <div className="mb-4 max-h-44 space-y-2 overflow-y-auto text-sm">
-            {history.length === 0 && <p className="text-stone-500">Ask about an appointment or our care services.</p>}
-            {history.map((item, index) => <p key={`${item.role}-${index}`} className={item.role === "user" ? "text-right text-stone-900" : "text-stone-600"}>{item.content}</p>)}
+
+          <div aria-live="polite" className="max-h-48 space-y-2 overflow-y-auto bg-[#fcfbfd] p-4 text-[13px]">
+            {history.length === 0 && (
+              <p className="rounded-lg border border-dashed border-[#e9e6ef] bg-white p-3 leading-5 text-[#85828d]">
+                Ask about an appointment or our care services.
+              </p>
+            )}
+            {history.map((item, index) => (
+              <p key={`${item.role}-${index}`} className={`max-w-[88%] rounded-xl px-3 py-2.5 leading-5 ${item.role === "user" ? "ml-auto bg-[#302e38] text-white" : "border border-[#eeecf1] bg-white text-[#62606b]"}`}>
+                {item.content}
+              </p>
+            ))}
           </div>
-          <form onSubmit={submitMessage} className="grid gap-2">
-            <input value={patientName} onChange={(event) => setPatientName(event.target.value)} placeholder="Your name" required className={inputClass} />
-            <input value={patientEmail} onChange={(event) => setPatientEmail(event.target.value)} type="email" placeholder="Your email" required className={inputClass} />
-            <input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="How can we help?" required className={inputClass} />
-            <button type="submit" disabled={result.isLoading} className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700">{result.isLoading ? "Thinking..." : "Send"}</button>
+
+          <form onSubmit={submitMessage} className="grid gap-2 p-4">
+            <Input value={patientName} onChange={(event) => setPatientName(event.target.value)} placeholder="Your name" required />
+            <Input value={patientEmail} onChange={(event) => setPatientEmail(event.target.value)} type="email" placeholder="Your email" required />
+            <div className="flex gap-2">
+              <Input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="How can we help?" required />
+              <Button type="submit" size="icon" disabled={result.isLoading} aria-label={result.isLoading ? "Sending message" : "Send"}>
+                {result.isLoading ? <span className="size-4 animate-spin rounded-full border-2 border-white/35 border-t-white" /> : <Icon name="arrow-right" className="size-4" />}
+              </Button>
+            </div>
           </form>
-          {lastUpdate && !lastUpdate.success && <p role="alert" className="mt-3 text-sm text-red-700">Booking not completed: {lastUpdate.detail}</p>}
-          {lastUpdate?.success && <p role="status" className="mt-3 text-sm text-green-700">{lastUpdate.detail}</p>}
-          {result.isError && <p role="alert" className="mt-3 text-sm text-red-700">The assistant could not respond.</p>}
-        </section>
+          {lastUpdate && !lastUpdate.success && <p role="alert" className="px-4 pb-3 text-xs text-[#b74b4b]">Booking not completed: {lastUpdate.detail}</p>}
+          {lastUpdate?.success && <p role="status" className="px-4 pb-3 text-xs text-[#3b8057]">{lastUpdate.detail}</p>}
+          {result.isError && <p role="alert" className="px-4 pb-3 text-xs text-[#b74b4b]">The assistant could not respond.</p>}
+        </Card>
       )}
-      <button type="button" onClick={() => setIsOpen((open) => !open)} aria-expanded={isOpen} className="ml-auto block rounded-full bg-stone-900 px-5 py-3 text-sm font-medium text-white shadow-[0_12px_24px_rgba(0,0,0,0.16)] hover:bg-stone-700">{isOpen ? "Close assistant" : "Ask CareNest"}</button>
+      <Button type="button" onClick={() => setIsOpen((open) => !open)} aria-expanded={isOpen} className="ml-auto h-11 rounded-full px-4 shadow-[0_8px_22px_rgba(34,31,48,0.18)]">
+        <Icon name="sparkle" className="size-4" />
+        {isOpen ? "Close assistant" : "Ask CareNest"}
+      </Button>
     </aside>
   );
 }

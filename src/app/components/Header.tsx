@@ -1,44 +1,60 @@
+import { Button } from "./ui/button";
+import { Icon } from "./ui/IconGlyph";
+
 type HeaderProps = {
   onAdminSignIn: () => void;
 };
 
+const navItems = [
+  ["Home", "#home"],
+  ["Services", "#services"],
+  ["Departments", "#departments"],
+  ["Contact", "#contact"],
+] as const;
+
 export function Header({ onAdminSignIn }: HeaderProps) {
   return (
-    <header className="sticky top-4 z-20 mb-8 flex items-center justify-between rounded-full border border-stone-300/80 bg-white/80 px-5 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.08)] backdrop-blur">
-      <div className="flex items-center gap-3">
-        <div className="grid h-9 w-9 place-items-center rounded-xl bg-stone-800 text-sm font-bold text-white">
-          C
-        </div>
-        <div>
-          <p className="text-sm font-bold">CareNest</p>
-          <span className="text-[10px] uppercase tracking-[0.18em] text-stone-500">
-            Hospital
+    <header className="sticky top-3 z-20 mx-auto mb-5 rounded-xl border border-[#e8e7eb]/90 bg-white/85 px-3 py-2.5 shadow-[0_8px_30px_rgba(32,29,45,0.045)] backdrop-blur-xl sm:px-4">
+      <div className="flex items-center justify-between gap-3">
+        <a href="#home" aria-label="CareNest home" className="group flex shrink-0 items-center gap-2.5">
+          <span className="grid size-9 place-items-center rounded-[10px] bg-[#28262e] text-white shadow-sm transition-transform duration-200 group-hover:scale-[1.04]">
+            <Icon name="heart" className="size-[17px]" strokeWidth={1.8} />
           </span>
-        </div>
+          <span className="leading-tight">
+            <span className="block text-[14px] font-semibold tracking-[-0.035em] text-[#292830]">CareNest</span>
+            <span className="mt-0.5 block text-[9px] font-medium uppercase tracking-[0.17em] text-[#9997a1]">Medical center</span>
+          </span>
+        </a>
+
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 sm:flex">
+          {navItems.map(([label, href]) => (
+            <a
+              key={href}
+              href={href}
+              className="rounded-md px-3 py-2 text-[12px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+
+        <Button onClick={onAdminSignIn} size="sm" className="h-9 px-3.5">
+          Admin sign in
+          <Icon name="arrow-right" className="size-3.5" />
+        </Button>
       </div>
 
-      <nav className="hidden gap-6 text-sm md:flex">
-        <a href="#home" className="hover:text-black">
-          Home
-        </a>
-        <a href="#services" className="hover:text-black">
-          Services
-        </a>
-        <a href="#departments" className="hover:text-black">
-          Departments
-        </a>
-        <a href="#contact" className="hover:text-black">
-          Contact
-        </a>
+      <nav aria-label="Mobile navigation" className="-mx-1 mt-2 flex gap-1 overflow-x-auto border-t border-[#efedf1] pt-2 sm:hidden">
+        {navItems.map(([label, href]) => (
+          <a
+            key={href}
+            href={href}
+            className="shrink-0 rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
+          >
+            {label}
+          </a>
+        ))}
       </nav>
-
-      <button
-        type="button"
-        onClick={onAdminSignIn}
-        className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700"
-      >
-        Admin sign in
-      </button>
     </header>
   );
 }
