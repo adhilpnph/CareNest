@@ -59,9 +59,12 @@ by a later feature; do not create a second components directory.
 	Redux login action and reports invalid credentials without changing role.
 - `shared/StoreProvider.tsx`: Client boundary that supplies the Redux store.
 - `shared/AssistantSidebar.tsx`: Session-persistent assistant UI with loading,
-  error, booking-success, and rejected-booking states.
+  error, booking-success, and rejected-booking states. Patient name and email
+  are collected conversationally only when missing; appointment drafts are
+  carried in hidden message metadata until the patient confirms.
 - `patient/PatientApiSection.tsx`: RTK Query-backed department and doctor
-	directory plus patient appointment creation.
+  directory plus patient appointment creation. Doctor directory records can
+  include experience, working hours, and appointment length.
 
 ## State and Data Flow
 
@@ -90,9 +93,11 @@ backend can validate its JWT cookie. RTK Query tags invalidate resource lists
 after mutations.
 
 The assistant uses `POST /assistant/chat` through the same API slice. Its
-conversation history is stored in `sessionStorage` for the current browser
-session. Successful booking results invalidate the appointments tag; rejected
-booking results are shown inline.
+conversation history, including a hidden pending booking draft, is stored in
+`sessionStorage` for the current browser session. The backend checks available
+slots and creates an appointment only after a separate confirmation message.
+Successful booking results invalidate the appointments tag; rejected booking
+results are shown inline.
 
 ## Routing
 

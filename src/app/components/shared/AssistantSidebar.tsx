@@ -16,8 +16,6 @@ const storageKey = "carenest-assistant-history";
 export function AssistantSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [patientName, setPatientName] = useState("");
-  const [patientEmail, setPatientEmail] = useState("");
   const [history, setHistory] = useState<AssistantMessage[]>(() => {
     if (typeof window === "undefined") return [];
     const storedHistory = window.sessionStorage.getItem(storageKey);
@@ -41,15 +39,13 @@ export function AssistantSidebar() {
   const submitMessage = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedMessage = message.trim();
-    if (!trimmedMessage || !patientName.trim() || !patientEmail.trim()) return;
+    if (!trimmedMessage) return;
 
     setLastUpdate(null);
     try {
       const response = await sendMessage({
         message: trimmedMessage,
         history,
-        patient_name: patientName.trim(),
-        patient_email: patientEmail.trim(),
       }).unwrap();
       setHistory(response.history);
       setLastUpdate(response.appointment_update);
@@ -88,17 +84,15 @@ export function AssistantSidebar() {
               </p>
             )}
             {history.map((item, index) => (
-              <p key={`${item.role}-${index}`} className={`max-w-[88%] rounded-xl px-3 py-2.5 leading-5 ${item.role === "user" ? "ml-auto bg-[#302e38] text-white" : "border border-[#eeecf1] bg-white text-[#62606b]"}`}>
+              <p key={`${item.role}-${index}`} className={`max-w-[88%] whitespace-pre-line rounded-xl px-3 py-2.5 leading-5 ${item.role === "user" ? "ml-auto bg-[#302e38] text-white" : "border border-[#eeecf1] bg-white text-[#62606b]"}`}>
                 {item.content}
               </p>
             ))}
           </div>
 
           <form onSubmit={submitMessage} className="grid gap-2 p-4">
-            <Input value={patientName} onChange={(event) => setPatientName(event.target.value)} placeholder="Your name" required />
-            <Input value={patientEmail} onChange={(event) => setPatientEmail(event.target.value)} type="email" placeholder="Your email" required />
             <div className="flex gap-2">
-              <Input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="How can we help?" required />
+              <Input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Ask about an appointment..." required />
               <Button type="submit" size="icon" disabled={result.isLoading} aria-label={result.isLoading ? "Sending message" : "Send"}>
                 {result.isLoading ? <span className="size-4 animate-spin rounded-full border-2 border-white/35 border-t-white" /> : <Icon name="arrow-right" className="size-4" />}
               </Button>

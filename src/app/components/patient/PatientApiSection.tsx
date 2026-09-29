@@ -61,6 +61,7 @@ export function PatientApiSection() {
                 {doctors.data?.filter((doctor) => doctor.department_id === department.id).map((doctor) => (
                   <Badge key={doctor.id} variant="outline" className="px-2.5 py-1 text-[10px]">
                     {doctor.name} <span className="text-[#b5b2bc]">·</span> {doctor.specialty}
+                    {doctor.experience_years != null && <span className="text-[#8d8996]"> · {doctor.experience_years} years</span>}
                   </Badge>
                 ))}
               </div>

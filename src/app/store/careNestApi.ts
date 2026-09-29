@@ -12,6 +12,9 @@ export type Doctor = {
   specialty: string;
   email: string;
   department_id: number;
+  experience_years?: number | null;
+  working_hours?: string;
+  slot_minutes?: number;
 };
 
 export type Appointment = {
@@ -36,6 +39,13 @@ export type Prescription = {
 export type AssistantMessage = {
   role: "user" | "assistant";
   content: string;
+  booking_draft?: {
+    doctor_id: number;
+    doctor_name: string;
+    slot_start: string;
+    patient_name: string;
+    patient_email: string;
+  } | null;
 };
 
 export type AppointmentUpdate = {
@@ -183,8 +193,6 @@ export const careNestApi = createApi({
       {
         message: string;
         history: AssistantMessage[];
-        patient_name: string;
-        patient_email: string;
       }
     >({
       query: (body) => ({ url: "/assistant/chat", method: "POST", body }),

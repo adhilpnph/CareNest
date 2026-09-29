@@ -92,7 +92,16 @@ export function AdminPortal() {
   const submitDoctor = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const payload = { name: String(form.get("name")), specialty: String(form.get("specialty")), email: String(form.get("email")), department_id: Number(form.get("department_id")) };
+    const experience = String(form.get("experience_years") ?? "").trim();
+    const payload = {
+      name: String(form.get("name")),
+      specialty: String(form.get("specialty")),
+      email: String(form.get("email")),
+      department_id: Number(form.get("department_id")),
+      experience_years: experience ? Number(experience) : null,
+      working_hours: `${String(form.get("workday_start"))}-${String(form.get("workday_end"))}`,
+      slot_minutes: Number(form.get("slot_minutes")),
+    };
     if (editing?.type === "doctor") {
       await updateDoctor({ id: editing.item.id, changes: payload }).unwrap();
       closeEditor();
@@ -122,6 +131,9 @@ export function AdminPortal() {
   const editingLabel = editing ? `${editing.type} #${editing.item.id}` : "";
   const departmentEditId = editing?.type === "department" ? editing.item.id : "new";
   const doctorEditId = editing?.type === "doctor" ? editing.item.id : "new";
+  const doctorHours = editing?.type === "doctor"
+    ? (editing.item.working_hours ?? "09:00-17:00").split("-", 2)
+    : ["09:00", "17:00"];
   const appointmentEditId = editing?.type === "appointment" ? editing.item.id : "new";
   const prescriptionEditId = editing?.type === "prescription" ? editing.item.id : "new";
 
@@ -189,6 +201,13 @@ export function AdminPortal() {
               <Input name="name" defaultValue={editing?.type === "doctor" ? editing.item.name : ""} placeholder="Doctor name" required />
               <Input name="specialty" defaultValue={editing?.type === "doctor" ? editing.item.specialty : ""} placeholder="Specialty" required />
               <Input name="email" type="email" defaultValue={editing?.type === "doctor" ? editing.item.email : ""} placeholder="Email" required />
+              <Input name="experience_years" type="number" min="0" max="80" defaultValue={editing?.type === "doctor" ? editing.item.experience_years ?? "" : ""} placeholder="Experience in years" />
+              <div className="grid grid-cols-2 gap-3">
+                <Input name="workday_start" type="time" defaultValue={doctorHours[0]} aria-label="Doctor working hours start in hospital local time" required />
+                <Input name="workday_end" type="time" defaultValue={doctorHours[1]} aria-label="Doctor working hours end in hospital local time" required />
+              </div>
+              <p className="-mt-2 text-xs text-[#8a8792]">Daily hospital-local hours; slots repeat for the chosen appointment length.</p>
+              <Input name="slot_minutes" type="number" min="5" max="240" defaultValue={editing?.type === "doctor" ? editing.item.slot_minutes ?? 30 : 30} placeholder="Appointment length in minutes" required />
               <Select name="department_id" required defaultValue={editing?.type === "doctor" ? editing.item.department_id : ""}>
                 <option value="" disabled>Choose department</option>
                 {departments.data?.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
@@ -200,7 +219,7 @@ export function AdminPortal() {
             <div className="mt-5">
               {doctors.data?.map((doctor) => (
                 <div key={doctor.id} className={`${rowClass} ${isEditing("doctor", doctor.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "doctor", item: doctor })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{doctor.name}</strong><br /><span className="text-[#8a8792]">{doctor.specialty} · {doctor.email}</span></span>
+                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{doctor.name}</strong><br /><span className="text-[#8a8792]">{doctor.specialty} · {doctor.experience_years ?? "Experience not listed"} years · {doctor.working_hours ?? "09:00-17:00"} · {doctor.slot_minutes ?? 30} min · {doctor.email}</span></span>
                   <span className="flex shrink-0 gap-1">
                     <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "doctor", item: doctor }); }}>Update</Button>
                     <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deleteDoctor(doctor.id); }}>Delete</Button>
