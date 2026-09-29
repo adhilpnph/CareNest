@@ -51,6 +51,10 @@ function formatDateTime(value: string) {
   return value.slice(0, 16);
 }
 
+function displayDateTime(value: string) {
+  return value.replace("T", " ").slice(0, 16);
+}
+
 const formClass = "grid gap-3";
 const rowClass = "group flex cursor-pointer items-center justify-between gap-3 border-t border-[#f0eef2] py-3 text-[12px] transition-colors hover:bg-[#faf9fc]";
 
@@ -111,7 +115,7 @@ export function AdminPortal() {
   const submitAppointment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const payload = { patient_name: String(form.get("patient_name")), patient_email: String(form.get("patient_email")), scheduled_at: new Date(String(form.get("scheduled_at"))).toISOString(), doctor_id: Number(form.get("doctor_id")) };
+    const payload = { patient_name: String(form.get("patient_name")), patient_email: String(form.get("patient_email")), scheduled_at: String(form.get("scheduled_at")), doctor_id: Number(form.get("doctor_id")) };
     if (editing?.type === "appointment") {
       await updateAppointment({ id: editing.item.id, changes: payload }).unwrap();
       closeEditor();
@@ -239,7 +243,10 @@ export function AdminPortal() {
             <form key={`appointment-${appointmentEditId}`} onSubmit={submitAppointment} className={formClass}>
               <Input name="patient_name" defaultValue={editing?.type === "appointment" ? editing.item.patient_name : ""} placeholder="Patient name" required />
               <Input name="patient_email" type="email" defaultValue={editing?.type === "appointment" ? editing.item.patient_email : ""} placeholder="Patient email" required />
-              <Input name="scheduled_at" type="datetime-local" defaultValue={editing?.type === "appointment" ? formatDateTime(editing.item.scheduled_at) : ""} required />
+              <label className="grid gap-1.5 text-[11px] font-medium text-[#67656f]">
+                Appointment date and time (hospital local)
+                <Input name="scheduled_at" type="datetime-local" defaultValue={editing?.type === "appointment" ? formatDateTime(editing.item.scheduled_at_local) : ""} required />
+              </label>
               <Select name="doctor_id" required defaultValue={editing?.type === "appointment" ? editing.item.doctor_id : ""}>
                 <option value="" disabled>Choose doctor</option>
                 {doctors.data?.map((doctor) => <option key={doctor.id} value={doctor.id}>{doctor.name}</option>)}
@@ -251,7 +258,7 @@ export function AdminPortal() {
             <div className="mt-5">
               {appointments.data?.map((appointment) => (
                 <div key={appointment.id} className={`${rowClass} ${isEditing("appointment", appointment.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "appointment", item: appointment })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{appointment.patient_name}</strong><br /><span className="text-[#8a8792]">{appointment.scheduled_at} · {appointment.status}</span></span>
+                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{appointment.patient_name}</strong><br /><span className="text-[#8a8792]">{displayDateTime(appointment.scheduled_at_local)} hospital local · {appointment.status}</span></span>
                   <span className="flex shrink-0 gap-1">
                     <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "appointment", item: appointment }); }}>Update</Button>
                     <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deleteAppointment(appointment.id); }}>Delete</Button>

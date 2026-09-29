@@ -22,6 +22,7 @@ export type Appointment = {
   patient_name: string;
   patient_email: string;
   scheduled_at: string;
+  scheduled_at_local: string;
   status: string;
   doctor_id: number;
 };
@@ -142,14 +143,14 @@ export const careNestApi = createApi({
     }),
     createAppointment: builder.mutation<
       Appointment,
-      Omit<Appointment, "id" | "status"> & { status?: string }
+      Omit<Appointment, "id" | "status" | "scheduled_at_local"> & { status?: string }
     >({
       query: (body) => ({ url: "/appointments", method: "POST", body }),
       invalidatesTags: ["Appointments"],
     }),
     updateAppointment: builder.mutation<
       Appointment,
-      { id: number; changes: Partial<Omit<Appointment, "id">> }
+      { id: number; changes: Partial<Omit<Appointment, "id" | "scheduled_at_local">> }
     >({
       query: ({ id, changes }) => ({
         url: `/appointments/${id}`,

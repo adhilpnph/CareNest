@@ -22,7 +22,7 @@ export function PatientApiSection() {
     await createAppointment({
       patient_name: String(form.get("patient_name")),
       patient_email: String(form.get("patient_email")),
-      scheduled_at: new Date(String(form.get("scheduled_at"))).toISOString(),
+      scheduled_at: String(form.get("scheduled_at")),
       doctor_id: Number(form.get("doctor_id")),
     });
   };
@@ -90,7 +90,7 @@ export function PatientApiSection() {
             <Input name="patient_email" type="email" placeholder="Your email" required />
           </label>
           <label className="grid gap-1.5 text-[11px] font-medium text-[#67656f]">
-            Preferred date and time
+            Preferred date and time (hospital local)
             <Input name="scheduled_at" type="datetime-local" required />
           </label>
           <label className="grid gap-1.5 text-[11px] font-medium text-[#67656f]">
