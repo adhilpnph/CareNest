@@ -26,11 +26,15 @@ export function AdminLogin({ onClose }: AdminLoginProps) {
     event.preventDefault();
     setError("");
     try {
-      await loginRequest({ username, password }).unwrap();
-      dispatch(login());
+      const session = await loginRequest({ username, password }).unwrap();
+      if (session.role !== "ADMIN" || !session.is_authenticated || !session.access_token) {
+        setError("This account does not have administrator access.");
+        return;
+      }
+      dispatch(login(session.access_token));
       onClose();
     } catch {
-      setError("Those admin credentials are not recognised.");
+      setError("Unable to sign in. Check your details and try again.");
     }
   };
 

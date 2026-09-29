@@ -55,11 +55,18 @@ export type AssistantChatResponse = {
 export type LoginResponse = {
   role: "ADMIN" | "PATIENT";
   is_authenticated: boolean;
+  access_token: string;
 };
-console.log("🔥 CURRENT API BASE:", "https://carenestbackend.fastapicloud.dev");
 const baseQuery = fetchBaseQuery({
-  baseUrl:  "https://carenestbackend.fastapicloud.dev",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "https://carenestbackend.fastapicloud.dev" ,
   credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    const { auth } = getState() as { auth?: { accessToken?: string | null } };
+    if (auth?.accessToken) {
+      headers.set("authorization", `Bearer ${auth.accessToken}`);
+    }
+    return headers;
+  },
 });
 
 export const careNestApi = createApi({
