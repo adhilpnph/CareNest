@@ -40,7 +40,7 @@ export function CrudSection<T extends { id: number }>({
       <CardContent className="pt-4">
         {form}
         {isLoading && <p role="status" className="mt-3 text-xs text-[#96939e]">Loading...</p>}
-        {error && <p role="alert" className="mt-3 text-sm text-[#b74b4b]">Request failed. Try again.</p>}
+        {error != null && <p role="alert" className="mt-3 text-sm text-[#b74b4b]">Request failed. Try again.</p>}
         <div className="mt-5">
           {items?.map((item) => (
             <div
