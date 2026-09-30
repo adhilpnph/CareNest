@@ -12,123 +12,124 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Overview
 
-This directory contains the CareNest Hospital MVP, a small Next.js App Router
-application styled with Tailwind CSS. The current experience is a single-page
-hospital landing page with static mock content and a client-side department
-doctor panel.
+This directory contains the Next.js frontend for CareNest Hospital's
+single-hospital MVP. Patients can browse backend-provided departments and
+doctors, request appointments, and use the appointment assistant. Admins can
+sign in and manage departments, doctors, appointments, and prescriptions.
+Marketing and contact content remains static.
+
+The application currently supports one hospital. It has no tenant or
+organization ownership, tenant-scoped data, or tenant selection. Treat those
+capabilities as unimplemented.
 
 ## Directory Structure
 
 ```text
 src/app/
-	components/       Reusable page sections and role-based portal components
-	components/admin/ Admin-only portal components
-	components/patient/ Patient-facing portal components
-	components/shared/ Shared application infrastructure
-	data.ts           Static department, doctor, and hero highlight data
-	globals.css       Tailwind import and global document styles
-	layout.tsx        Root layout, metadata, and document-level styles
-	page.tsx          Client page orchestrator and modal state owner
-	store/            Redux store and authentication role slice
-	types.ts          Shared Department and Doctor types
+  components/
+    admin/          AdminLogin.tsx, AdminPortal.tsx
+    patient/        DepartmentCarousel.tsx, PatientApiSection.tsx, PatientPortal.tsx
+    shared/         AssistantSidebar.tsx, ContactSection.tsx, CrudSection.tsx,
+                    Header.tsx, HeroSection.tsx, ServicesSection.tsx, StoreProvider.tsx
+    ui/             Shared buttons, inputs, cards, badges, selects, and icons
+  data.ts           Static hero highlight labels
+  globals.css       Tailwind import and global styles
+  layout.tsx        Root layout and metadata
+  page.tsx          Chooses the patient or admin portal
+  store/
+    authSlice.ts    In-memory role and admin token state
+    careNestApi.ts  API types, RTK Query endpoints, and cache tags
+    index.ts        Redux store setup
 ```
 
-Keep all new components under `src/app/components`, using `admin/`, `patient/`,
-or `shared/` according to the role guidance above. The original landing-page
-sections remain directly under `components/` until they are naturally reused
-by a later feature; do not create a second components directory.
+Keep new components under `src/app/components`, using `admin/`, `patient/`,
+`shared/`, or `ui/` according to their role. Reuse existing shared components
+where practical; do not create another components directory.
 
 ## Existing Components
 
-- `Header.tsx`: Sticky CareNest header with anchor navigation and a book-visit
-	action.
-- `HeroSection.tsx`: Hero statement, calls to action, and highlight pills. It
-	receives the highlight labels from `data.ts`.
-- `ServicesSection.tsx`: Static cards for primary care, diagnostics, and
-	specialist care.
-- `DepartmentsSection.tsx`: Department card grid. It receives department data
-	and calls the page callback when a department is selected.
-- `DoctorModal.tsx`: Conditional modal panel showing one doctor from the
-	selected department, with close, previous, and next controls.
-- `ContactSection.tsx`: Static contact details for phone, address, and hours.
-- `patient/PatientPortal.tsx`: Existing landing-page experience, including its
-	department modal state and temporary admin-preview switch.
-- `admin/AdminPortal.tsx`: Lightweight admin landing placeholder with a switch
-	back to the patient experience through logout.
-- `admin/AdminLogin.tsx`: Temporary admin credential form that dispatches the
-	Redux login action and reports invalid credentials without changing role.
-- `shared/StoreProvider.tsx`: Client boundary that supplies the Redux store.
-- `shared/AssistantSidebar.tsx`: Session-persistent assistant UI with loading,
-  error, booking-success, and rejected-booking states. Patient name and email
-  are collected conversationally only when missing; appointment drafts are
-  carried in hidden message metadata until the patient confirms.
-- `patient/PatientApiSection.tsx`: RTK Query-backed department and doctor
-  directory plus patient appointment creation. Doctor directory records can
-  include experience, working hours, and appointment length.
+- `page.tsx`: Reads the Redux role and renders either `PatientPortal` or
+  `AdminPortal` at the root route.
+- `patient/PatientPortal.tsx`: Composes the patient landing page, admin sign-in
+  panel, API-backed directory and appointment form, contact section, and chat.
+- `patient/PatientApiSection.tsx`: Loads departments and doctors through RTK
+  Query, displays `DepartmentCarousel`, and submits patient appointment requests.
+- `patient/DepartmentCarousel.tsx`: Browses departments and their doctors using
+  backend data, with loading and error states.
+- `admin/AdminLogin.tsx`: Signs in through the backend and switches to the admin
+  portal only when the response grants the `ADMIN` role.
+- `admin/AdminPortal.tsx`: Creates, updates, and deletes departments, doctors,
+  appointments, and prescriptions. Doctor schedule fields and appointment times
+  are edited in hospital-local time.
+- `shared/CrudSection.tsx`: Reusable admin list and record-action layout; each
+  admin resource supplies its own form and displayed fields.
+- `shared/AssistantSidebar.tsx`: Calls the backend assistant, stores chat
+  history in `sessionStorage`, and shows booking results and available-time
+  alternatives. Pending booking metadata is not rendered as chat text.
+- `shared/Header.tsx`: In-page navigation and admin sign-in action.
+- `shared/HeroSection.tsx`: Main message, appointment links, and highlight
+  labels from `data.ts`.
+- `shared/ServicesSection.tsx` and `shared/ContactSection.tsx`: Static
+  presentation content.
+- `shared/StoreProvider.tsx`: Makes the Redux store available to client UI.
+- `components/ui/`: Reusable visual primitives used by the portals and sections.
 
 ## State and Data Flow
 
-The Redux store in `store/` is the single source of truth for the current role.
-The `auth` slice starts as an unauthenticated `PATIENT`; guests are explicitly
-initialized as patients on the patient portal mount. Admin login and logout
-call backend auth endpoints. The backend keeps the JWT in an httpOnly cookie,
-so the frontend never stores or reads the token directly.
+The Redux store combines the `auth` slice and RTK Query API cache. The auth
+slice starts as an unauthenticated `PATIENT`; `PatientPortal` resets guests to
+that state when it mounts. Admin sign-in calls the backend, stores the returned
+access token in Redux memory, and sends it as a bearer token on later requests.
+Requests also include credentials. The frontend does not persist Redux auth
+state across reloads.
 
-`page.tsx` reads the role with `useSelector` and renders exactly one portal.
-The patient portal owns its temporary UI state with React `useState`:
+`page.tsx` renders one portal according to the current role. Patient-facing
+department, doctor, appointment, and prescription data comes from the backend
+through `store/careNestApi.ts`; RTK Query caches results and mutation tags
+refresh affected lists. The default API URL is the configured hosted backend.
+Set `NEXT_PUBLIC_API_URL` to override it, for example with a local backend URL.
 
-- `selectedDepartment` identifies the department shown in the panel.
-- `activeIndex` identifies the doctor currently shown.
-- `isModalOpen` controls whether the panel is mounted.
+The assistant calls `POST /assistant/chat` through RTK Query. Chat history and
+pending booking metadata are retained in browser `sessionStorage` for the
+current tab session. The backend uses its own doctor and availability data and
+creates a booking only after confirmation and a final availability check.
+Successful bookings invalidate the appointments cache. A rejected booking can
+include backend-provided alternative times.
 
-The patient portal passes data and event callbacks into presentational
-components. Mock departments, doctors, and hero highlights live in `data.ts`;
-their shapes are defined in `types.ts`. There is no API, persistence, or real
-backend authentication, or persistence yet.
-
-`store/careNestApi.ts` is the single frontend data layer for backend resources.
-It uses `NEXT_PUBLIC_API_URL` when provided and otherwise targets the local
-backend at `http://localhost:8000`. Requests include credentials so the
-backend can validate its JWT cookie. RTK Query tags invalidate resource lists
-after mutations.
-
-The assistant uses `POST /assistant/chat` through the same API slice. Its
-conversation history, including a hidden pending booking draft, is stored in
-`sessionStorage` for the current browser session. The backend checks available
-slots and creates an appointment only after a separate confirmation message.
-Successful booking results invalidate the appointments tag; rejected booking
-results are shown inline.
+`data.ts` currently contains hero highlight labels only. Services and contact
+copy are local presentation content; do not duplicate backend-owned hospital
+records in frontend mock data.
 
 ## Routing
 
-The app currently uses only the root App Router route supplied by
-`src/app/page.tsx`. Header links use in-page anchors for `home`, `services`,
-`departments`, and `contact`. There are no additional routes or route groups.
+The app uses the root App Router route in `src/app/page.tsx`; there are no other
+routes or route groups. Header links target the `home`, `services`,
+`departments`, and `contact` sections. The hero also links to the appointments
+form.
 
 ## Styling
 
 Tailwind CSS v4 is imported from `src/app/globals.css` using
-`@import "tailwindcss"`. Components use inline Tailwind utility classes rather
-than CSS modules. Global CSS provides smooth scrolling, the light color scheme,
-the stone-toned gradient background, the font stack, and shared transitions.
-Keep the existing restrained grey, white, and stone visual language unless a
-future requirement explicitly changes the design direction.
+`@import "tailwindcss"`. Components use Tailwind utility classes rather than
+CSS modules. Global styles provide smooth scrolling, reduced-motion support,
+a light grey-white background, and a restrained lavender accent. Keep this
+visual style unless the user requests a change.
 
 ## Conventions
 
 - Use TypeScript and functional React components.
 - Name component files in PascalCase and export named components where the
-	existing file does so.
+  existing file does so. The App Router page uses a default export.
 - Keep page-level orchestration in `page.tsx`; put reusable UI in the relevant
-	components subfolder.
-- Define component prop types near the component and reuse shared domain types
-	from `types.ts`.
+  components subfolder.
+- Define component prop types near the component. API response types are in
+  `store/careNestApi.ts`; there is no `types.ts` file.
 - Prefer semantic HTML, explicit button `type` values, accessible labels for
-	icon-only controls, and stable section IDs for in-page navigation.
-- Keep mock content concise and centralized in `data.ts` rather than embedding
-	duplicated domain data across components.
-- Run `npm run lint` and `npm run build` from `frontend/` after meaningful
-	changes.
-- Run `npm test` for Vitest component tests and `npm run test:e2e` for the
-	Playwright browser suite. The E2E suite expects the local backend to be
-	available at port 8000 and never targets the hosted app.
+  icon-only controls, and stable section IDs for in-page navigation.
+- Keep backend-owned operational data in the API layer. Keep shared highlight
+  labels in `data.ts` and concise static section copy with its component.
+- `package.json` defines lint, build, Vitest, and Playwright scripts. Follow
+  task-specific instructions before running them. For assistant work,
+  `CHAT_PLAN.md` prohibits automated tests and live model API calls; provide
+  manual verification steps for the project owner instead. The project owner
+  handles migration, server startup, and deployment for this work.
