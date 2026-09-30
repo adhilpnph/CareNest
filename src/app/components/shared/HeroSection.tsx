@@ -1,7 +1,7 @@
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-import { Icon } from "./ui/IconGlyph";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Icon } from "../ui/IconGlyph";
 
 type HeroSectionProps = {
   highlights: string[];
@@ -30,13 +30,13 @@ export function HeroSection({ highlights }: HeroSectionProps) {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Button size="lg" className="group h-11 px-5">
+          <a href="#appointments" className="group inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#26252b] px-5 text-sm font-medium text-white shadow-[0_1px_2px_rgba(20,20,25,0.14)] transition-[background,color,border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-px hover:bg-[#403b55]">
             Book appointment
             <Icon name="arrow-right" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Button>
-          <Button variant="outline" size="lg" className="h-11 px-5">
+          </a>
+          <a href="#departments" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#e5e4e8] bg-white px-5 text-sm font-medium text-[#39383f] shadow-sm transition-[background,color,border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-px hover:border-[#d4d1dd] hover:bg-[#faf9fc]">
             Meet our team
-          </Button>
+          </a>
         </div>
 
         <div className="mt-9 flex max-w-[520px] flex-wrap gap-2">

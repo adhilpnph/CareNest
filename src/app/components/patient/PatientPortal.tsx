@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AdminLogin } from "../admin/AdminLogin";
-import { ContactSection } from "../ContactSection";
-import { Header } from "../Header";
-import { HeroSection } from "../HeroSection";
+import { ContactSection } from "../shared/ContactSection";
+import { Header } from "../shared/Header";
+import { HeroSection } from "../shared/HeroSection";
 import { PatientApiSection } from "./PatientApiSection";
-import { ServicesSection } from "../ServicesSection";
+import { ServicesSection } from "../shared/ServicesSection";
 import { AssistantSidebar } from "../shared/AssistantSidebar";
 import { highlights } from "../../data";
 import { enterAsPatient } from "../../store/authSlice";

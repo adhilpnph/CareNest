@@ -29,6 +29,7 @@ export function AssistantSidebar() {
   const [lastUpdate, setLastUpdate] = useState<{
     success: boolean;
     detail: string;
+    alternatives: Array<{ display: string; local_date: string; local_time: string }>;
   } | null>(null);
   const [sendMessage, result] = useAssistantChatMutation();
 
@@ -48,12 +49,17 @@ export function AssistantSidebar() {
         history,
       }).unwrap();
       setHistory(response.history);
-      setLastUpdate(response.appointment_update);
+      setLastUpdate({
+        success: response.appointment_update?.success ?? false,
+        detail: response.appointment_update?.detail ?? "",
+        alternatives: response.appointment_update?.alternatives ?? [],
+      });
       setMessage("");
     } catch {
       setLastUpdate({
         success: false,
         detail: "The assistant is unavailable right now. Please try again.",
+        alternatives: [],
       });
     }
   };
@@ -98,7 +104,28 @@ export function AssistantSidebar() {
               </Button>
             </div>
           </form>
-          {lastUpdate && !lastUpdate.success && <p role="alert" className="px-4 pb-3 text-xs text-[#b74b4b]">Booking not completed: {lastUpdate.detail}</p>}
+          {lastUpdate && !lastUpdate.success && (
+            <div className="px-4 pb-3">
+              <p role="alert" className="text-xs text-[#b74b4b]">Booking not completed: {lastUpdate.detail}</p>
+              {lastUpdate.alternatives.length > 0 && (
+                <div className="mt-2">
+                  <p className="mb-1.5 text-[11px] font-medium text-[#67656f]">Available times:</p>
+                  <div className="space-y-1">
+                    {lastUpdate.alternatives.map((alt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setMessage(`Book ${alt.local_date} at ${alt.local_time}`)}
+                        className="block w-full rounded-lg border border-[#e8e4f0] bg-white px-2.5 py-1.5 text-left text-[11px] text-[#62606b] transition-colors hover:border-[#c5bedd] hover:bg-[#f8f6fc]"
+                      >
+                        {alt.display}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {lastUpdate?.success && <p role="status" className="px-4 pb-3 text-xs text-[#3b8057]">{lastUpdate.detail}</p>}
           {result.isError && <p role="alert" className="px-4 pb-3 text-xs text-[#b74b4b]">The assistant could not respond.</p>}
         </Card>

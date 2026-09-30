@@ -30,22 +30,16 @@ import {
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Input, Select } from "../ui/input";
+import { Input } from "../ui/input";
+import { Select } from "../ui/select";
 import { Icon } from "../ui/IconGlyph";
+import { CrudSection } from "../shared/CrudSection";
 
 type EditTarget =
   | { type: "department"; item: Department }
   | { type: "doctor"; item: Doctor }
   | { type: "appointment"; item: Appointment }
   | { type: "prescription"; item: Prescription };
-
-function ErrorMessage({ error }: { error: unknown }) {
-  return error ? <p role="alert" className="mt-3 text-sm text-[#b74b4b]">Request failed. Try again.</p> : null;
-}
-
-function LoadingMessage({ loading }: { loading: boolean }) {
-  return loading ? <p role="status" className="mt-3 text-xs text-[#96939e]">Loading...</p> : null;
-}
 
 function formatDateTime(value: string) {
   return value.slice(0, 16);
@@ -56,7 +50,6 @@ function displayDateTime(value: string) {
 }
 
 const formClass = "grid gap-3";
-const rowClass = "group flex cursor-pointer items-center justify-between gap-3 border-t border-[#f0eef2] py-3 text-[12px] transition-colors hover:bg-[#faf9fc]";
 
 export function AdminPortal() {
   const dispatch = useDispatch<AppDispatch>();
@@ -168,39 +161,40 @@ export function AdminPortal() {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between border-b border-[#f0eef2] py-4">
-            <CardTitle className="text-base">Departments</CardTitle>
-            {departments.data && <Badge variant="outline">{departments.data.length}</Badge>}
-          </CardHeader>
-          <CardContent className="pt-4">
+        <CrudSection
+          title="Departments"
+          items={departments.data}
+          isLoading={departments.isLoading}
+          error={departmentCreate.error || departmentUpdate.error || departments.error}
+          editingId={editing?.type === "department" ? editing.item.id : null}
+          onSelect={(item) => selectRecord({ type: "department", item })}
+          onDelete={deleteDepartment}
+          columns={[
+            { render: (d) => <strong className="text-[#403e47]">{d.name}</strong> },
+            { render: (d) => <span className="text-[#8a8792]">{d.description}</span> },
+          ]}
+          form={
             <form key={`department-${departmentEditId}`} onSubmit={submitDepartment} className={formClass}>
               <Input name="name" defaultValue={editing?.type === "department" ? editing.item.name : ""} placeholder="Department name" required />
               <Input name="description" defaultValue={editing?.type === "department" ? editing.item.description : ""} placeholder="Description" required />
               <Button type="submit" disabled={departmentCreate.isLoading || departmentUpdate.isLoading}>{editing?.type === "department" ? "Save department update" : "Add department"}</Button>
             </form>
-            <LoadingMessage loading={departments.isLoading} />
-            <ErrorMessage error={departmentCreate.error || departmentUpdate.error || departments.error} />
-            <div className="mt-5">
-              {departments.data?.map((department) => (
-                <div key={department.id} className={`${rowClass} ${isEditing("department", department.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "department", item: department })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{department.name}</strong><br /><span className="text-[#8a8792]">{department.description}</span></span>
-                  <span className="flex shrink-0 gap-1">
-                    <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "department", item: department }); }}>Update</Button>
-                    <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deleteDepartment(department.id); }}>Delete</Button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          }
+        />
 
-        <Card className="overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between border-b border-[#f0eef2] py-4">
-            <CardTitle className="text-base">Doctors</CardTitle>
-            {doctors.data && <Badge variant="outline">{doctors.data.length}</Badge>}
-          </CardHeader>
-          <CardContent className="pt-4">
+        <CrudSection
+          title="Doctors"
+          items={doctors.data}
+          isLoading={doctors.isLoading}
+          error={doctorCreate.error || doctorUpdate.error || doctors.error}
+          editingId={editing?.type === "doctor" ? editing.item.id : null}
+          onSelect={(item) => selectRecord({ type: "doctor", item })}
+          onDelete={deleteDoctor}
+          columns={[
+            { render: (d) => <strong className="text-[#403e47]">{d.name}</strong> },
+            { render: (d) => <span className="text-[#8a8792]">{d.specialty} · {d.experience_years ?? "Experience not listed"} years · {d.working_hours ?? "09:00-17:00"} · {d.slot_minutes ?? 30} min · {d.email}</span> },
+          ]}
+          form={
             <form key={`doctor-${doctorEditId}`} onSubmit={submitDoctor} className={formClass}>
               <Input name="name" defaultValue={editing?.type === "doctor" ? editing.item.name : ""} placeholder="Doctor name" required />
               <Input name="specialty" defaultValue={editing?.type === "doctor" ? editing.item.specialty : ""} placeholder="Specialty" required />
@@ -218,28 +212,22 @@ export function AdminPortal() {
               </Select>
               <Button type="submit" disabled={doctorCreate.isLoading || doctorUpdate.isLoading}>{editing?.type === "doctor" ? "Save doctor update" : "Add doctor"}</Button>
             </form>
-            <LoadingMessage loading={doctors.isLoading} />
-            <ErrorMessage error={doctorCreate.error || doctorUpdate.error || doctors.error} />
-            <div className="mt-5">
-              {doctors.data?.map((doctor) => (
-                <div key={doctor.id} className={`${rowClass} ${isEditing("doctor", doctor.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "doctor", item: doctor })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{doctor.name}</strong><br /><span className="text-[#8a8792]">{doctor.specialty} · {doctor.experience_years ?? "Experience not listed"} years · {doctor.working_hours ?? "09:00-17:00"} · {doctor.slot_minutes ?? 30} min · {doctor.email}</span></span>
-                  <span className="flex shrink-0 gap-1">
-                    <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "doctor", item: doctor }); }}>Update</Button>
-                    <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deleteDoctor(doctor.id); }}>Delete</Button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          }
+        />
 
-        <Card className="overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between border-b border-[#f0eef2] py-4">
-            <CardTitle className="text-base">Appointments</CardTitle>
-            {appointments.data && <Badge variant="outline">{appointments.data.length}</Badge>}
-          </CardHeader>
-          <CardContent className="pt-4">
+        <CrudSection
+          title="Appointments"
+          items={appointments.data}
+          isLoading={appointments.isLoading}
+          error={appointmentCreate.error || appointmentUpdate.error || appointments.error}
+          editingId={editing?.type === "appointment" ? editing.item.id : null}
+          onSelect={(item) => selectRecord({ type: "appointment", item })}
+          onDelete={deleteAppointment}
+          columns={[
+            { render: (a) => <strong className="text-[#403e47]">{a.patient_name}</strong> },
+            { render: (a) => <span className="text-[#8a8792]">{displayDateTime(a.scheduled_at_local)} hospital local · {a.status}</span> },
+          ]}
+          form={
             <form key={`appointment-${appointmentEditId}`} onSubmit={submitAppointment} className={formClass}>
               <Input name="patient_name" defaultValue={editing?.type === "appointment" ? editing.item.patient_name : ""} placeholder="Patient name" required />
               <Input name="patient_email" type="email" defaultValue={editing?.type === "appointment" ? editing.item.patient_email : ""} placeholder="Patient email" required />
@@ -253,28 +241,22 @@ export function AdminPortal() {
               </Select>
               <Button type="submit" disabled={appointmentCreate.isLoading || appointmentUpdate.isLoading}>{editing?.type === "appointment" ? "Save appointment update" : "Add appointment"}</Button>
             </form>
-            <LoadingMessage loading={appointments.isLoading} />
-            <ErrorMessage error={appointmentCreate.error || appointmentUpdate.error || appointments.error} />
-            <div className="mt-5">
-              {appointments.data?.map((appointment) => (
-                <div key={appointment.id} className={`${rowClass} ${isEditing("appointment", appointment.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "appointment", item: appointment })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{appointment.patient_name}</strong><br /><span className="text-[#8a8792]">{displayDateTime(appointment.scheduled_at_local)} hospital local · {appointment.status}</span></span>
-                  <span className="flex shrink-0 gap-1">
-                    <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "appointment", item: appointment }); }}>Update</Button>
-                    <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deleteAppointment(appointment.id); }}>Delete</Button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          }
+        />
 
-        <Card className="overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between border-b border-[#f0eef2] py-4">
-            <CardTitle className="text-base">Prescriptions</CardTitle>
-            {prescriptions.data && <Badge variant="outline">{prescriptions.data.length}</Badge>}
-          </CardHeader>
-          <CardContent className="pt-4">
+        <CrudSection
+          title="Prescriptions"
+          items={prescriptions.data}
+          isLoading={prescriptions.isLoading}
+          error={prescriptionCreate.error || prescriptionUpdate.error || prescriptions.error}
+          editingId={editing?.type === "prescription" ? editing.item.id : null}
+          onSelect={(item) => selectRecord({ type: "prescription", item })}
+          onDelete={deletePrescription}
+          columns={[
+            { render: (p) => <strong className="text-[#403e47]">{p.patient_name}</strong> },
+            { render: (p) => <span className="text-[#8a8792]">{p.medication} · {p.dosage}</span> },
+          ]}
+          form={
             <form key={`prescription-${prescriptionEditId}`} onSubmit={submitPrescription} className={formClass}>
               <Input name="patient_name" defaultValue={editing?.type === "prescription" ? editing.item.patient_name : ""} placeholder="Patient name" required />
               <Input name="patient_email" type="email" defaultValue={editing?.type === "prescription" ? editing.item.patient_email : ""} placeholder="Patient email" required />
@@ -284,21 +266,8 @@ export function AdminPortal() {
               <Input name="appointment_id" type="number" defaultValue={editing?.type === "prescription" && editing.item.appointment_id ? editing.item.appointment_id : ""} placeholder="Appointment ID (optional)" />
               <Button type="submit" disabled={prescriptionCreate.isLoading || prescriptionUpdate.isLoading}>{editing?.type === "prescription" ? "Save prescription update" : "Create prescription"}</Button>
             </form>
-            <LoadingMessage loading={prescriptions.isLoading} />
-            <ErrorMessage error={prescriptionCreate.error || prescriptionUpdate.error || prescriptions.error} />
-            <div className="mt-5">
-              {prescriptions.data?.map((prescription) => (
-                <div key={prescription.id} className={`${rowClass} ${isEditing("prescription", prescription.id) ? "bg-[#f8f6fc]" : ""}`} onClick={() => selectRecord({ type: "prescription", item: prescription })}>
-                  <span className="min-w-0 truncate"><strong className="text-[#403e47]">{prescription.patient_name}</strong><br /><span className="text-[#8a8792]">{prescription.medication} · {prescription.dosage}</span></span>
-                  <span className="flex shrink-0 gap-1">
-                    <Button type="button" variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); selectRecord({ type: "prescription", item: prescription }); }}>Update</Button>
-                    <Button type="button" variant="destructive" size="sm" onClick={(event) => { event.stopPropagation(); deletePrescription(prescription.id); }}>Delete</Button>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          }
+        />
       </div>
     </main>
   );

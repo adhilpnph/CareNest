@@ -55,6 +55,7 @@ export type AppointmentUpdate = {
   doctor_id: number;
   slot_start: string;
   detail: string;
+  alternatives: Array<{ display: string; local_date: string; local_time: string }>;
 };
 
 export type AssistantChatResponse = {

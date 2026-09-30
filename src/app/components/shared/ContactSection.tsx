@@ -1,6 +1,6 @@
-import { Badge } from "./ui/badge";
-import { Card } from "./ui/card";
-import { Icon } from "./ui/IconGlyph";
+import { Badge } from "../ui/badge";
+import { Card } from "../ui/card";
+import { Icon } from "../ui/IconGlyph";
 
 const contactDetails = [
   { label: "Call us", value: "+1 (415) 555-0148", icon: "clock" as const },

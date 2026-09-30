@@ -1,5 +1,5 @@
-import { Button } from "./ui/button";
-import { Icon } from "./ui/IconGlyph";
+import { Button } from "../ui/button";
+import { Icon } from "../ui/IconGlyph";
 
 type HeaderProps = {
   onAdminSignIn: () => void;
@@ -26,12 +26,12 @@ export function Header({ onAdminSignIn }: HeaderProps) {
           </span>
         </a>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-1 sm:flex">
+        <nav aria-label="Main navigation" className="flex items-center gap-1 overflow-x-auto">
           {navItems.map(([label, href]) => (
             <a
               key={href}
               href={href}
-              className="rounded-md px-3 py-2 text-[12px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
+              className="shrink-0 rounded-md px-3 py-2 text-[12px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
             >
               {label}
             </a>
@@ -43,18 +43,6 @@ export function Header({ onAdminSignIn }: HeaderProps) {
           <Icon name="arrow-right" className="size-3.5" />
         </Button>
       </div>
-
-      <nav aria-label="Mobile navigation" className="-mx-1 mt-2 flex gap-1 overflow-x-auto border-t border-[#efedf1] pt-2 sm:hidden">
-        {navItems.map(([label, href]) => (
-          <a
-            key={href}
-            href={href}
-            className="shrink-0 rounded-md px-2.5 py-1.5 text-[11px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
-          >
-            {label}
-          </a>
-        ))}
-      </nav>
     </header>
   );
 }

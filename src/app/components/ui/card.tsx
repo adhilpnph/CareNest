@@ -19,10 +19,6 @@ export function CardTitle({ className = "", ...props }: HTMLAttributes<HTMLHeadi
   return <h3 className={`font-semibold tracking-[-0.025em] text-[#25242a] ${className}`} {...props} />;
 }
 
-export function CardDescription({ className = "", ...props }: DivProps) {
-  return <div className={`text-sm leading-6 text-[#77757f] ${className}`} {...props} />;
-}
-
 export function CardContent({ className = "", ...props }: DivProps) {
   return <div className={`px-5 pb-5 ${className}`} {...props} />;
 }
