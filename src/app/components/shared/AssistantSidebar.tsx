@@ -49,18 +49,22 @@ export function AssistantSidebar() {
         history,
       }).unwrap();
       setHistory(response.history);
-      setLastUpdate({
+      setLastUpdate(response.appointment_update ? {
         success: response.appointment_update?.success ?? false,
         detail: response.appointment_update?.detail ?? "",
         alternatives: response.appointment_update?.alternatives ?? [],
-      });
+      } : null);
       setMessage("");
     } catch {
-      setLastUpdate({
-        success: false,
-        detail: "The assistant is unavailable right now. Please try again.",
-        alternatives: [],
-      });
+      setHistory([
+        ...history,
+        { role: "user", content: trimmedMessage },
+        {
+          role: "assistant",
+          content: "I’m having trouble connecting right now. Please try again in a moment.",
+        },
+      ]);
+      setMessage("");
     }
   };
 
@@ -106,10 +110,9 @@ export function AssistantSidebar() {
           </form>
           {lastUpdate && !lastUpdate.success && (
             <div className="px-4 pb-3">
-              <p role="alert" className="text-xs text-[#b74b4b]">Booking not completed: {lastUpdate.detail}</p>
               {lastUpdate.alternatives.length > 0 && (
                 <div className="mt-2">
-                  <p className="mb-1.5 text-[11px] font-medium text-[#67656f]">Available times:</p>
+                  <p className="mb-1.5 text-[11px] font-medium text-[#67656f]">You can choose one of these available times:</p>
                   <div className="space-y-1">
                     {lastUpdate.alternatives.map((alt, i) => (
                       <button
@@ -127,7 +130,6 @@ export function AssistantSidebar() {
             </div>
           )}
           {lastUpdate?.success && <p role="status" className="px-4 pb-3 text-xs text-[#3b8057]">{lastUpdate.detail}</p>}
-          {result.isError && <p role="alert" className="px-4 pb-3 text-xs text-[#b74b4b]">The assistant could not respond.</p>}
         </Card>
       )}
       <Button type="button" onClick={() => setIsOpen((open) => !open)} aria-expanded={isOpen} className="ml-auto h-11 rounded-full px-4 shadow-[0_8px_22px_rgba(34,31,48,0.18)]">
