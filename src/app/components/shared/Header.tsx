@@ -14,10 +14,10 @@ const navItems = [
 
 export function Header({ onAdminSignIn }: HeaderProps) {
   return (
-    <header className="sticky top-3 z-20 mx-auto mb-5 rounded-xl border border-[#e8e7eb]/90 bg-white/85 px-3 py-2.5 shadow-[0_8px_30px_rgba(32,29,45,0.045)] backdrop-blur-xl sm:px-4">
+    <header className="sticky top-3 z-20 mx-auto mb-5 rounded-none border border-[#dfe5e2]/90 bg-white/90 px-3 py-2.5 shadow-[0_8px_30px_rgba(27,45,40,0.055)] backdrop-blur-xl sm:px-4">
       <div className="flex items-center justify-between gap-3">
         <a href="#home" aria-label="CareNest home" className="group flex shrink-0 items-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-[10px] bg-[#28262e] text-white shadow-sm transition-transform duration-200 group-hover:scale-[1.04]">
+          <span className="grid size-9 place-items-center rounded-none bg-[#163c38] text-white shadow-sm transition-transform duration-200 group-hover:scale-[1.04]">
             <Icon name="heart" className="size-[17px]" strokeWidth={1.8} />
           </span>
           <span className="leading-tight">
@@ -31,7 +31,7 @@ export function Header({ onAdminSignIn }: HeaderProps) {
             <a
               key={href}
               href={href}
-              className="shrink-0 rounded-md px-3 py-2 text-[12px] font-medium text-[#77757f] transition-colors hover:bg-[#f5f4f7] hover:text-[#302f36]"
+              className="shrink-0 rounded-none px-3 py-2 text-[12px] font-medium text-[#687571] transition-colors hover:bg-[#eef3f1] hover:text-[#202a28]"
             >
               {label}
             </a>

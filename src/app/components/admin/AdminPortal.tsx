@@ -139,7 +139,7 @@ export function AdminPortal() {
       <header className="mb-7 flex flex-wrap items-start justify-between gap-4 border-b border-[#e9e7ec] pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="grid size-8 place-items-center rounded-lg bg-[#292730] text-white">
+            <span className="grid size-8 place-items-center rounded-none bg-[#163c38] text-white">
               <Icon name="heart" className="size-4" />
             </span>
             <Badge variant="outline" className="uppercase tracking-[0.12em]">Admin portal</Badge>
@@ -154,7 +154,7 @@ export function AdminPortal() {
       </header>
 
       {editing && (
-        <div role="status" className="mb-5 flex items-center justify-between gap-4 rounded-xl border border-[#e3dff0] bg-[#f6f4fb] px-4 py-3 text-[13px] text-[#615784]">
+        <div role="status" className="mb-5 flex items-center justify-between gap-4 rounded-none border border-[#cce5e1] bg-[#eff8f6] px-4 py-3 text-[13px] text-[#17665f]">
           <span>You are currently updating <strong>{editingLabel}</strong>. The form is populated with its existing details.</span>
           <Button type="button" variant="ghost" size="sm" onClick={closeEditor}>Cancel update</Button>
         </div>

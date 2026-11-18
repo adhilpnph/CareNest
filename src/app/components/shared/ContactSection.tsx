@@ -21,7 +21,7 @@ export function ContactSection() {
       <Card className="grid divide-y divide-[#efedf2] overflow-hidden md:grid-cols-3 md:divide-x md:divide-y-0">
         {contactDetails.map((detail) => (
           <div key={detail.label} className="group flex items-start gap-3.5 p-5 sm:p-6">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-[#eeecf2] bg-[#faf9fc] text-[#7969bd] transition-colors group-hover:border-[#e4dff2] group-hover:bg-[#f6f3fc]">
+            <span className="grid size-9 shrink-0 place-items-center rounded-none border border-[#dfe5e2] bg-[#f5f8f7] text-[#17665f] transition-colors group-hover:border-[#b8d5d0] group-hover:bg-[#eff8f6]">
               <Icon name={detail.icon} className="size-4" />
             </span>
             <div>

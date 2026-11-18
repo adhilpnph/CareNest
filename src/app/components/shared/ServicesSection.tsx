@@ -38,10 +38,10 @@ export function ServicesSection() {
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((service, index) => (
-          <Card key={service.title} style={{ animationDelay: `${index * 75}ms` }} className="group animate-rise overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#dcd8e8] hover:shadow-[0_12px_30px_rgba(42,37,62,0.06)]">
+          <Card key={service.title} style={{ animationDelay: `${index * 75}ms` }} className="group animate-rise overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-[#b8d5d0] hover:shadow-[0_12px_30px_rgba(24,44,38,0.07)]">
             <CardContent className="p-5 pt-5 sm:p-6">
               <div className="flex items-center justify-between">
-                <span className="grid size-10 place-items-center rounded-xl border border-[#eeecf2] bg-[#faf9fc] text-[#7b6abd] transition-colors group-hover:border-[#e5e0f3] group-hover:bg-[#f5f2fc]">
+                <span className="grid size-10 place-items-center rounded-none border border-[#dfe5e2] bg-[#f5f8f7] text-[#17665f] transition-colors group-hover:border-[#b8d5d0] group-hover:bg-[#eff8f6]">
                   <Icon name={service.icon} className="size-[18px]" />
                 </span>
                 <span className="font-mono text-[10px] text-[#aaa7b1]">{service.number}</span>
