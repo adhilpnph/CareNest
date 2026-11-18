@@ -31,10 +31,10 @@ export function PatientApiSection() {
       </div>
 
       <Card id="appointments" className="h-fit overflow-hidden lg:sticky lg:top-28 scroll-mt-28">
-        <div className="border-b border-[#efedf2] bg-gradient-to-br from-[#faf9fd] to-white px-5 py-5 sm:px-6">
+        <div className="border-b border-[#e5ebe8] bg-gradient-to-br from-[#f3f8f6] to-white px-5 py-5 sm:px-6">
           <div className="flex items-center justify-between">
             <Badge variant="accent" className="uppercase tracking-[0.11em]">Appointments</Badge>
-            <Icon name="clock" className="size-4 text-[#9b91c2]" />
+            <Icon name="clock" className="size-4 text-[#24766e]" />
           </div>
           <h2 className="mt-3 text-[25px] font-semibold tracking-[-0.05em] text-[#292830]">Request a visit</h2>
           <p className="mt-1 text-[13px] text-[#898691]">Choose a clinician and a time that works for you.</p>

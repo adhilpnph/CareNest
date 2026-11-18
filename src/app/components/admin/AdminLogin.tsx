@@ -39,8 +39,8 @@ export function AdminLogin({ onClose }: AdminLoginProps) {
   };
 
   return (
-    <Card className="animate-rise mb-6 overflow-hidden border-[#e4e1eb] shadow-[0_18px_55px_rgba(38,34,60,0.08)]">
-      <div className="flex items-start justify-between gap-4 border-b border-[#efedf2] bg-gradient-to-r from-[#faf9fd] to-white px-5 py-5 sm:px-6">
+    <Card className="animate-rise mb-6 overflow-hidden border-[#dfe5e2] shadow-[0_18px_55px_rgba(27,45,40,0.08)]">
+      <div className="flex items-start justify-between gap-4 border-b border-[#e5ebe8] bg-gradient-to-r from-[#f3f8f6] to-white px-5 py-5 sm:px-6">
         <div>
           <Badge variant="accent" className="uppercase tracking-[0.12em]">Admin access</Badge>
           <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-[#292830]">Sign in to CareNest</h2>

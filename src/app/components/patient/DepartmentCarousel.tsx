@@ -45,7 +45,7 @@ export function DepartmentCarousel() {
   if (departments.isLoading || doctors.isLoading) {
     return (
       <div className="flex items-center gap-2 text-sm text-[#85828d]" role="status">
-        <span className="size-3 animate-spin rounded-full border-2 border-[#ddd8ed] border-t-[#7969bd]" />
+        <span className="size-3 animate-spin rounded-none border-2 border-[#d7e4e0] border-t-[#0f766e]" />
         Loading care directory...
       </div>
     );
@@ -72,16 +72,16 @@ export function DepartmentCarousel() {
           </h2>
         </div>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" size="icon" onClick={goPrevious} aria-label="Previous department" className="size-11 rounded-full border-2 border-[#e5e4e8] bg-white shadow-sm transition-all hover:border-[#7969bd] hover:bg-[#f5f2fc]">
-            <Icon name="arrow-left" className="size-5 text-[#7969bd]" />
+          <Button type="button" variant="outline" size="icon" onClick={goPrevious} aria-label="Previous department" className="size-11 rounded-none border-2 border-[#d9e0dd] bg-white shadow-sm transition-all hover:border-[#0f766e] hover:bg-[#eff8f6]">
+            <Icon name="arrow-left" className="size-5 text-[#17665f]" />
           </Button>
-          <Button type="button" variant="outline" size="icon" onClick={goNext} aria-label="Next department" className="size-11 rounded-full border-2 border-[#e5e4e8] bg-white shadow-sm transition-all hover:border-[#7969bd] hover:bg-[#f5f2fc]">
-            <Icon name="arrow-right" className="size-5 text-[#7969bd]" />
+          <Button type="button" variant="outline" size="icon" onClick={goNext} aria-label="Next department" className="size-11 rounded-none border-2 border-[#d9e0dd] bg-white shadow-sm transition-all hover:border-[#0f766e] hover:bg-[#eff8f6]">
+            <Icon name="arrow-right" className="size-5 text-[#17665f]" />
           </Button>
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-xl border border-[#e9e8ec] bg-white shadow-[0_1px_2px_rgba(24,24,28,0.025)]">
+      <div className="relative overflow-hidden rounded-none border border-[#dfe5e2] bg-white shadow-[0_1px_2px_rgba(24,30,28,0.035)]">
         <div
           className={`flex transition-transform duration-300 ease-in-out ${isTransitioning ? (direction === "right" ? "-translate-x-full" : "translate-x-full") : "translate-x-0"}`}
         >
@@ -91,7 +91,7 @@ export function DepartmentCarousel() {
                 <h3 className="text-xl font-semibold tracking-[-0.03em] text-[#302f36]">{currentDepartment.name}</h3>
                 <p className="mt-1 text-sm leading-6 text-[#898691]">{currentDepartment.description}</p>
               </div>
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#f5f3fa] text-[#7969bd]">
+              <span className="grid size-10 shrink-0 place-items-center rounded-none bg-[#eff8f6] text-[#17665f]">
                 <Icon name="heart" className="size-[18px]" />
               </span>
             </div>
@@ -101,8 +101,8 @@ export function DepartmentCarousel() {
                 <p className="text-sm text-[#898691]">No doctors in this department yet.</p>
               ) : (
                 departmentDoctors.map((doctor) => (
-                  <div key={doctor.id} className="flex items-center gap-3 rounded-xl border border-[#efedf3] bg-[#fcfbfd] p-3 transition-colors hover:border-[#ddd9e8] hover:bg-white">
-                    <div className="relative size-10 shrink-0 overflow-hidden rounded-full border border-[#e8e4f0] bg-gradient-to-br from-[#f3f0fa] to-[#e7e3f0]">
+                  <div key={doctor.id} className="flex items-center gap-3 rounded-none border border-[#e5ebe8] bg-[#f8faf9] p-3 transition-colors hover:border-[#bdd7d2] hover:bg-white">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded-none border border-[#dce3e0] bg-gradient-to-br from-[#edf5f2] to-[#e2ece8]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="/doctor-avatar.png"
@@ -119,7 +119,7 @@ export function DepartmentCarousel() {
                         <Badge variant="outline" className="px-2 py-0.5 text-[10px]">{doctor.experience_years} years</Badge>
                       )}
                       <Badge variant="success" className="px-2 py-0.5 text-[10px]">
-                        <span className="size-1.5 rounded-full bg-[#58a273]" />
+                        <span className="size-1.5 rounded-none bg-[#58a273]" />
                         Available
                       </Badge>
                     </div>
@@ -146,7 +146,7 @@ export function DepartmentCarousel() {
                   }
                 }}
                 aria-label={`Go to ${dept.name}`}
-                className={`h-2 rounded-full transition-all duration-300 ${i === currentIndex ? "w-6 bg-[#7969bd]" : "w-2 bg-[#e0dce8] hover:bg-[#c5bedd]"}`}
+                className={`h-2 rounded-none transition-all duration-300 ${i === currentIndex ? "w-6 bg-[#0f766e]" : "w-2 bg-[#d7e1dd] hover:bg-[#abcac3]"}`}
               />
             ))}
           </div>

@@ -33,7 +33,7 @@ export function CrudSection<T extends { id: number }>({
 }: CrudSectionProps<T>) {
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="flex-row items-center justify-between border-b border-[#f0eef2] py-4">
+      <CardHeader className="flex-row items-center justify-between border-b border-[#e5ebe8] py-4">
         <CardTitle className="text-base">{title}</CardTitle>
         {items && <Badge variant="outline">{items.length}</Badge>}
       </CardHeader>
@@ -45,7 +45,7 @@ export function CrudSection<T extends { id: number }>({
           {items?.map((item) => (
             <div
               key={item.id}
-              className={`group flex cursor-pointer items-center justify-between gap-3 border-t border-[#f0eef2] py-3 text-[12px] transition-colors hover:bg-[#faf9fc] ${editingId === item.id ? "bg-[#f8f6fc]" : ""}`}
+              className={`group flex cursor-pointer items-center justify-between gap-3 border-t border-[#e5ebe8] py-3 text-[12px] transition-colors hover:bg-[#f5f8f7] ${editingId === item.id ? "bg-[#eff8f6]" : ""}`}
               onClick={() => onSelect(item)}
             >
               <span className="min-w-0 truncate">
